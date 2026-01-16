@@ -1,8 +1,12 @@
 <?php
 
-use App\Models\Profile;
+use App\Models\Team;
 use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TeamUserController;
+use App\Http\Controllers\UserTeamController;
+
 
 
 
@@ -10,7 +14,7 @@ Route::get('/', function () {
   return view('welcome');
 });
 
-
+// One to One
 Route::get('/onetoone', function () {
   $users = User::with('profile')->get();
   return view('test', [
@@ -32,16 +36,15 @@ Route::get('/onetoone/create', function () {
     'bio' => 'Bio for first user',
   ]);
 
-
   return redirect()->route('onetoone');
 });
 
+// One to Many
 Route::get('/onetomany', function () {
   $users = User::with(['profile', 'tasks'])->get();
 
   return view('onetomany', [
     'users' => $users,
-    // 'tasks' => $tasks,
   ]);
 });
 
@@ -49,10 +52,37 @@ Route::get('/onetomany/list', function () {
   $users = User::with(['profile', 'tasks' => function ($query) {
     $query->where('status', 'H');
   }])->get();
-  // dump($users);
-  // exit;
+
   return view('onetomany-list', [
     'users' => $users,
-    // 'tasks' => $tasks,
   ]);
 });
+
+// Many to Many
+Route::get('/json/', function () {
+  $user = User::with('teams')->find(2);
+  //$user->teams->makeHidden('pivot'); // to hide the pivot information
+  $team = $user->teams->first();
+  return [
+    'user' => $user->name,
+    'first_team' => $team->name,
+    'role' => $team->pivot->role,
+    'teams_count' => $user->teams_count,
+    'is_owner' => $team->pivot->is_owner,
+  ];
+});
+
+
+Route::get('/teams', function () {
+  return view('teams.index', ['teams' => Team::withCount('users')->get()]);
+})->name('teams.index');
+
+Route::get('/users', function () {
+  return view('users.index', ['users' => User::withCount('teams')->get()]);
+})->name('users.index');
+
+Route::get('/users/{user}/teams', [UserTeamController::class, 'edit'])->name('users.teams.edit');
+Route::put('/users/{user}/teams', [UserTeamController::class, 'update'])->name('users.teams.update');
+
+// Route::get('/teams/{team}/users', [TeamUserController::class, 'edit'])->name('teams.users.edit');
+// Route::put('/teams/{team}/users', [TeamUserController::class, 'update'])->name('teams.users.update');

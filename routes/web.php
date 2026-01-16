@@ -84,5 +84,5 @@ Route::get('/users', function () {
 Route::get('/users/{user}/teams', [UserTeamController::class, 'edit'])->name('users.teams.edit');
 Route::put('/users/{user}/teams', [UserTeamController::class, 'update'])->name('users.teams.update');
 
-// Route::get('/teams/{team}/users', [TeamUserController::class, 'edit'])->name('teams.users.edit');
-// Route::put('/teams/{team}/users', [TeamUserController::class, 'update'])->name('teams.users.update');
+Route::get('/teams/{team}/users', [TeamUserController::class, 'edit'])->name('teams.users.edit');
+Route::put('/teams/{team}/users', [TeamUserController::class, 'update'])->name('teams.users.update');

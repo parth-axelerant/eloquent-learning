@@ -1,12 +1,14 @@
 <?php
 
-use App\Models\Team;
-use App\Models\User;
-use App\Models\Profile;
-use App\Models\Department;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamUserController;
 use App\Http\Controllers\UserTeamController;
+use App\Models\Department;
+use App\Models\Profile;
+use App\Models\Tag;
+use App\Models\Team;
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -102,10 +104,6 @@ Route::get('/departments-query', function () {
   return $completed;
 });
 
-//Polymorphic relationships are powerful and straightforward once you see the pieces together:
-//use morphs in the migration to create the {name}_id and {name}_type columns,
-//use morphTo on the polymorphic model (Description, Note), and
-//use morphOne or morphMany on the owning models (User, Team, Task).
 
 // Polymorphic Example: One to One
 Route::get('/polymorphic', function () {
@@ -115,4 +113,15 @@ Route::get('/polymorphic', function () {
 // Polymorphic Example: One to Many
 Route::get('/polymorphic/notes', function () {
   return User::with('notes')->first()->notes;
+});
+
+// Polymorphic Example: Many to Many
+Route::get('/polymorphic/tags', function () {
+  return User::with(['notes', 'tags'])->first();
+});
+
+
+//Approach from tags side
+Route::get('/tags', function () {
+  return Tag::with(['users', 'teams', 'tasks'])->get();
 });

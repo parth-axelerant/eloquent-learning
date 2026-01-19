@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Department;
 use App\Models\Task;
 use App\Models\Team;
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -94,5 +96,10 @@ class User extends Authenticatable
   public function notes(): MorphMany
   {
     return $this->morphMany(Note::class, 'notable'); // notable is the name of the morph field
+  }
+
+  public function tags(): MorphToMany
+  {
+    return $this->morphToMany(Tag::class, 'taggable');
   }
 }

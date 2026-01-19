@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Department;
+use App\Models\Tag;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
@@ -20,6 +21,10 @@ class DatabaseSeeder extends Seeder
   {
     $teams = Team::factory(5)->create();
     $departments = Department::factory(5)->create();
+    $contractor = Tag::create(['name' => 'Contractor']);
+    // dump($contractor);
+    // exit;
+    $urgent = Tag::create(['name' => 'Urgent']);
 
     User::factory(10)->create()->each(function ($user) use ($teams, $departments) {
       $user->profile()->create([
@@ -63,5 +68,10 @@ class DatabaseSeeder extends Seeder
     $user->notes()->create([
       'content' => 'morphmany is cool'
     ]);
+
+    // Polymorphic Example: Many to Many
+    $user->tags()->attach($contractor->id);
+    $team->tags()->attach($contractor->id);
+    $task->tags()->attach($urgent->id);
   }
 }

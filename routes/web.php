@@ -125,3 +125,35 @@ Route::get('/polymorphic/tags', function () {
 Route::get('/tags', function () {
   return Tag::with(['users', 'teams', 'tasks'])->get();
 });
+
+//Eager Loading and Aggregate Functions
+Route::get('/user-tasks', function () {
+  // return User::with(['tasks' => function ($query) {
+  //   $query->where('status', 'H');
+  // }, 'teams'])->get();
+
+
+  // loadMissing is very efficient
+  $user = User::first();
+  $user->loadMissing(['tasks' => function ($query) { // it checks to see if that relational data already pulled, loads missing relationships
+    $query->where('status', 'H');
+  }, 'teams']);
+
+  return $user;
+});
+// If we want just count withCount in relation it is much efficient rathen fetching and counting
+Route::get('/tasks-count', function () {
+  return User::withCount(['tasks' => function ($query) {
+    $query->where('status', 'C ');
+  }, 'teams'])->get();
+});
+
+// Aggregate Functions
+Route::get('/task-duration', function () {
+  return User::withMax(['tasks' => function ($query) {
+    $query->where('status', 'H ');
+  }], 'duration')->first();
+});
+//withSum
+//withAvg
+//withMax or withMin

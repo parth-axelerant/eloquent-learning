@@ -80,8 +80,15 @@ Route::get('/teams', function () {
   return view('teams.index', ['teams' => Team::withCount('users')->get()]);
 })->name('teams.index');
 
+// Route::get('/users', function () {
+//   return view('users.index', ['users' => User::withCount('teams')->get()]);
+// })->name('users.index');
+
 Route::get('/users', function () {
-  return view('users.index', ['users' => User::withCount('teams')->get()]);
+  $users = User::withCount('teams')->get();
+  // $users->loadMissing('teams'); // not practical if we want more relationships
+  // $users->withRelationshipAutoLoading(); // alternative of above approach, loads automatically that we need
+  return view('users.index', compact('users'));
 })->name('users.index');
 
 Route::get('/users/{user}/teams', [UserTeamController::class, 'edit'])->name('users.teams.edit');

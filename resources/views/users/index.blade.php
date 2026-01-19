@@ -18,8 +18,21 @@
       @foreach ($users as $user)
       <tr>
         <td class="px-6 py-4 font-medium">{{ $user->name }}</td>
-        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-          {{ $user->teams_count }}
+        <td class="text-center group">
+          <div class="relative inline-block cursor-pointer">
+            <span class="text-blue-500 underline">
+              {{ $user->teams_count }}
+            </span>
+
+            <!-- Tooltip -->
+            <div class="absolute left-1/2 top-full z-10 mt-1 w-48 -translate-x-1/2 rounded-lg bg-gray-800 p-2 text-sm text-white opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity duration-200 border-1 border-gray-700">
+              <ul class="list-inside">
+                @foreach ($user->teams as $team)
+                <li>{{ $team->name }}</li>
+                @endforeach
+              </ul>
+            </div>
+          </div>
         </td>
         <td class="px-6 py-4 text-right">
           <a href="{{ route('users.teams.edit', $user) }}"

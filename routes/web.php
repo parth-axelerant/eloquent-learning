@@ -3,6 +3,7 @@
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Profile;
+use App\Models\Department;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamUserController;
 use App\Http\Controllers\UserTeamController;
@@ -86,3 +87,17 @@ Route::put('/users/{user}/teams', [UserTeamController::class, 'update'])->name('
 
 Route::get('/teams/{team}/users', [TeamUserController::class, 'edit'])->name('teams.users.edit');
 Route::put('/teams/{team}/users', [TeamUserController::class, 'update'])->name('teams.users.update');
+
+
+// Has Many Through
+Route::get('/departments', function () {
+  return view('departments.index', ['departments' => Department::withCount(['users', 'tasks'])->get()]);
+})->name('departments.index');
+
+Route::get('/departments-query', function () {
+  $departments = Department::first();
+
+  $completed = $departments->tasks()->where('status', 'H')->get();
+
+  return $completed;
+});

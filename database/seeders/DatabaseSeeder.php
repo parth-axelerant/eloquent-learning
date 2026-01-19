@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Department;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
@@ -18,8 +19,9 @@ class DatabaseSeeder extends Seeder
   public function run(): void
   {
     $teams = Team::factory(5)->create();
+    $departments = Department::factory(5)->create();
 
-    User::factory(10)->create()->each(function ($user) use ($teams) {
+    User::factory(10)->create()->each(function ($user) use ($teams, $departments) {
       $user->profile()->create([
         'handle' => "Default Handle for $user->name",
         'bio' => "Default Bio for $user->name",
@@ -33,15 +35,13 @@ class DatabaseSeeder extends Seeder
 
       // Use 'use ($teams)' in the closure to access $teams variable
       $randomTeams = $teams->random(rand(1, 4));
+      $randomDepartment = $departments->random();
 
       foreach (is_iterable($randomTeams) ? $randomTeams : [$randomTeams] as $team) {
         $user->teams()->attach($team->id, ['role' => collect(['member', 'guest', 'owner'])->random()]);
       }
-    });
-    // User::factory()->create([
-    //     'name' => 'Test User',
-    //     'email' => 'test@example.com',
-    // ]);
 
+      $randomDepartment->users()->save($user);
+    });
   }
 }

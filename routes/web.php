@@ -101,3 +101,18 @@ Route::get('/departments-query', function () {
 
   return $completed;
 });
+
+//Polymorphic relationships are powerful and straightforward once you see the pieces together:
+//use morphs in the migration to create the {name}_id and {name}_type columns,
+//use morphTo on the polymorphic model (Description, Note), and
+//use morphOne or morphMany on the owning models (User, Team, Task).
+
+// Polymorphic Example: One to One
+Route::get('/polymorphic', function () {
+  return User::with('descriptions')->first()->descriptions->content;
+});
+
+// Polymorphic Example: One to Many
+Route::get('/polymorphic/notes', function () {
+  return User::with('notes')->first()->notes;
+});

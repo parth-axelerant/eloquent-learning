@@ -43,5 +43,25 @@ class DatabaseSeeder extends Seeder
 
       $randomDepartment->users()->save($user);
     });
+
+    // Polymorphic Example: One to One
+    $user = User::first();
+    $team = Team::first();
+    $task = Task::first();
+
+    $team->descriptions()->create([
+      'content' => 'First Team description',
+    ]);
+    $user->descriptions()->create([
+      'content' => 'First User description',
+    ]);
+
+    // Polymorphic Example: One to Many
+    $user->notes()->create([
+      'content' => 'polymorphic relations are cool',
+    ]);
+    $user->notes()->create([
+      'content' => 'morphmany is cool'
+    ]);
   }
 }
